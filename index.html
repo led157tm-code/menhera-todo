@@ -290,6 +290,7 @@ let lastUserAction = Date.now();
 
 let audioUnlocked = false;
 let bgmTimeout = null;
+let notificationLock = false;
 
 let introDone = false;
 let justRead = false;
@@ -529,25 +530,41 @@ function playSE() {
 }
 
 function showFakeNotification(title, msg) {
-  const count = Math.min(3, 1 + Math.floor(madnessLevel / 2));
+  if (notificationLock) return;
+  notificationLock = true;
 
-  for (let i = 0; i < count; i++) {
-    const box = document.createElement("div");
-    box.style.position = "fixed";
-    box.style.top = (10 + i * 50) + "px";
-    box.style.left = "50%";
-    box.style.transform = "translateX(-50%)";
-    box.style.background = "#06C755";
-    box.style.color = "#fff";
-    box.style.padding = "10px 15px";
-    box.style.borderRadius = "20px";
-    box.style.zIndex = "9999";
+  const box = document.createElement("div");
 
-    box.textContent = `${title}：${msg}`;
-    document.body.appendChild(box);
+  box.style.position = "fixed";
+  box.style.top = "10px";
+  box.style.left = "50%";
+  box.style.transform = "translateX(-50%) translateY(-20px)";
+  box.style.background = "#06C755";
+  box.style.color = "#fff";
+  box.style.padding = "10px 15px";
+  box.style.borderRadius = "20px";
+  box.style.zIndex = "9999";
 
-    setTimeout(() => box.remove(), 3000);
-  }
+  box.style.opacity = "0";
+  box.style.transition = "all 0.3s ease";
+
+  box.textContent = `${title}：${msg}`;
+  document.body.appendChild(box);
+
+  setTimeout(() => {
+    box.style.opacity = "1";
+    box.style.transform = "translateX(-50%) translateY(0)";
+  }, 10);
+
+  setTimeout(() => {
+    box.style.opacity = "0";
+    box.style.transform = "translateX(-50%) translateY(-20px)";
+  }, 2000);
+
+  setTimeout(() => {
+    box.remove();
+    notificationLock = false;
+  }, 2500);
 }
 
 function sendTaskFromInput() {
