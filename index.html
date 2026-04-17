@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>メンヘラ彼女ToDo</title>
+
+<link rel="manifest" href="manifest.json">
+
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <style>
 
@@ -384,12 +391,29 @@ function completeTask(index) {
 
   addChat("me", "おわった");
 
-  sendLine("ちゃんと見てたよ。えらいじゃん");
+  if (!window.clearCount) window.clearCount = 0;
+  window.clearCount++;
+
+  const praise = [
+    "えらすぎ",
+    "ちゃんとやるじゃん",
+    "余裕だよね"
+  ];
+
+  sendLine(random(praise));
+
+  if (window.clearCount % 3 === 0) {
+    setTimeout(() => {
+      sendLine("今日ちょっとすごいよ…");
+    }, 800);
+  }
 
   tasks.splice(index, 1);
 
   save();
   renderTasks();
+
+  updateMadness("soft");
 }
 
 function save() {
