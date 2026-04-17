@@ -339,18 +339,25 @@ function showChoices(options) {
   box.innerHTML = "";
 
   options.forEach(opt => {
-    const btn = document.createElement("button");
-    btn.className = "choiceBtn";
-    btn.textContent = opt.text;
+  const btn = document.createElement("button");
+  btn.className = "choiceBtn";
+  btn.textContent = opt.text;
 
-    btn.onclick = () => {
+  btn.onclick = () => {
+    sendMyMessage(opt.text); 
+
+    setTimeout(() => {
       opt.action();
-      box.innerHTML = "";
-    };
+    }, 300); 
 
-    box.appendChild(btn);
-  });
-}
+    box.innerHTML = "";
+  };
+
+  box.appendChild(btn);
+ }); 
+} 
+
+
 
 function renderTasks() {
   const list = document.getElementById("taskList");
@@ -461,6 +468,25 @@ function addChat(type, text) {
   chat.scrollTop = chat.scrollHeight;
 }
 
+function sendMyMessage(text) {
+  addChat("me", text);
+
+  const chat = document.getElementById("chat");
+
+  const read = document.createElement("div");
+  read.textContent = "送信中...";
+  read.style.fontSize = "10px";
+  read.style.color = "#888";
+  read.style.textAlign = "right";
+
+  chat.appendChild(read);
+  chat.scrollTop = chat.scrollHeight;
+
+  setTimeout(() => {
+    read.textContent = "既読";
+  }, 1000 + Math.random() * 1000);
+}
+
 function updateMadness(state) {
   if (state === "crazy") {
     madnessLevel = Math.min(madnessLevel + 1, 20);
@@ -468,6 +494,8 @@ function updateMadness(state) {
     madnessLevel = Math.max(0, madnessLevel - 1);
   }
 }
+
+
 
 function changeState(state) {
   document.body.className = state;
