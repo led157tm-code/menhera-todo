@@ -277,6 +277,8 @@ function unlockAudio() {
   bgm.loop = true;
 
   bgm.play().catch(() => {});
+  
+  audioReady = true;
 }
 
 document.addEventListener("click", () => {
@@ -528,6 +530,8 @@ function changeState(state) {
     if (playPromise !== undefined) {
       playPromise.catch(() => {});
     }
+
+    localStorage.setItem("currentState", state);
   }
 }
   
@@ -664,7 +668,9 @@ document.addEventListener("click", () => {
   if (!audioUnlocked) {
     const bgm = document.getElementById("bgm");
 
-    bgm.src = "bgm_soft.mp3"; 
+    const current = localStorage.getItem("currentState") || "soft";
+    bgm.src = bgmList[current];
+
     bgm.volume = 0.5;
     bgm.loop = true;
 
@@ -684,6 +690,12 @@ window.addEventListener("load", () => {
     sendLine("…さっきまでいなかったよね？");
   }
 
+   const savedState = localStorage.getItem("currentState");
+if (savedState) {
+  changeState(savedState);
+  lastState = savedState;
+}
+
   startGame();
 });
 
@@ -692,7 +704,9 @@ function startGame() {
   if (introDone) return;
   introDone = true;
 
+  if (!localStorage.getItem("currentState")) {
   changeState("soft");
+}
 
   setTimeout(() => {
     sendLine("おかえり。今日は何する？");
