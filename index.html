@@ -13,15 +13,34 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <style>
-
-#girl {
-  width: 120px;
-  height: auto;
-  margin: 10px auto;
-  display: block;
-  border-radius: 20px;
+/* =========================
+   画面全体
+========================= */
+html, body {
+  height: 100%;
+  overflow-x: hidden;
 }
 
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+
+  /* ★変更 */
+  background: #dde7f4;
+}
+
+#app {
+  width: 100%;
+  max-width: 420px;
+}
+
+/* =========================
+   状態別背景
+========================= */
 .soft {
   background: #ffffff;
 }
@@ -40,6 +59,18 @@
   background: #8b0000;
   animation: shake 0.15s infinite;
   position: relative;
+}
+
+.crazy::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 0, 0, 0.1);
+  pointer-events: none;
+  animation: flicker 0.2s infinite;
 }
 
 @keyframes pulse {
@@ -62,47 +93,45 @@
   100% { opacity: 0.1; }
 }
 
-@keyframes noiseAnim {
-  0% { transform: translate(0,0); }
-  50% { transform: translate(-5px,5px); }
-  100% { transform: translate(5px,-5px); }
-}
-
-#chat {
-  height: 70vh;
-  overflow-y: auto;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  background: #f5f5f5;
-}
-
-.bubble {
-  max-width: 70%;
-  padding: 8px 12px;
-  border-radius: 18px;
-  margin: 5px;
-}
-
-.me {
-  background: #06C755;
-  color: white;
-  align-self: flex-end;
-}
-
-.girl {
-  background: white;
-  color: black;
-  border: 1px solid #ddd;
-}
-
+/* =========================
+   ヘッダー
+========================= */
 #header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px;
-  background: #06C755;
-  color: white;
+  justify-content: flex-start;
+  background: #7da6d9;
+  color: #000;
+  padding: 6px 10px;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 420px;
+  height: 56px;
+  box-sizing: border-box;
+  z-index: 1000;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+}
+
+.backBtn {
+  font-size: 20px;
+}
+
+.headerText {
+  flex: 1;
+  margin-left: 8px;
+}
+
+#girlName {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+#status {
+  font-size: 11px;
+  color: #666;
 }
 
 #girlIcon {
@@ -111,15 +140,199 @@
   border-radius: 50%;
 }
 
+#badge {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: red;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+  display: none;
+}
+
+/* =========================
+   チャット画面
+========================= */
+#chat {
+  width: 100%;
+  max-width: 420px;
+  margin: 56px auto 0;
+  height: calc(100dvh - 56px - 64px);
+  overflow-y: auto;
+  padding: 0 12px 6px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+
+  /* ← !important消す */
+  background: linear-gradient(
+    to bottom,
+    #e9f1fb 0%,
+    #e3ecf8 40%,
+    #dde7f4 100%
+  );
+}
+
+/* 👇 これ追加 */
+.hard #chat,
+.crazy #chat {
+  background: #ffffff;
+}
+
+#chat div[style*="text-align: center"] {
+  display: inline-block;
+  margin: 12px auto;
+  padding: 4px 10px;
+  font-size: 11px !important;
+  color: #555 !important;
+  background: rgba(0,0,0,0.08);
+  border-radius: 12px;
+}
+
+/* =========================
+   メッセージ
+========================= */
+.msgRow {
+  display: flex;
+  align-items: flex-end;
+  margin: 10px 10px;
+  gap: 8px;
+}
+
+.msgRow.me {
+  justify-content: flex-end;
+}
+
+.msgRow.girl {
+  justify-content: flex-start;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  object-fit: cover;
+}
+
+.messageBlock {
+  display: flex;
+  flex-direction: column;
+  max-width: 80%;
+}
+
+.messageBlock.me {
+  align-items: flex-end;
+}
+
+.messageBlock.girl {
+  align-items: flex-start;
+}
+
+.bubble {
+  display: inline-block;
+  max-width: 100%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  position: relative;
+  word-break: break-word;
+  line-break: strict;
+  box-shadow: none !important;
+  font-size: 14px;
+}
+
+.bubble.me {
+  background: #06C755;
+  color: #fff !important;
+  border: none !important;
+}
+
+.bubble.girl {
+  background: white;
+  border: none !important;
+}
+
+.bubble.me::after {
+  content: "";
+  position: absolute;
+  right: -4px;
+  bottom: 6px;
+  width: 8px;
+  height: 8px;
+  background: #06C755;
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+
+.bubble.girl::after {
+  content: "";
+  position: absolute;
+  left: -4px;
+  bottom: 6px;
+  width: 8px;
+  height: 8px;
+  background: #ffffff;
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+
+.messageMeta {
+  display: flex;
+  flex-direction: row !important;
+  align-items: flex-end;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.messageBlock.me .messageMeta {
+  justify-content: flex-end;
+}
+
+.messageBlock.girl .messageMeta {
+  justify-content: flex-start;
+}
+
+.time,
+.read {
+  font-size: 10px;
+  color: #999;
+}
+
+.me .time {
+  text-align: right;
+}
+
+.girl .time {
+  text-align: left;
+}
+
+.statusWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 10px;
+  color: #888;
+}
+
+.readDone {
+  opacity: 0.6;
+}
+
+/* =========================
+   タスク・ピン留め
+========================= */
 .task {
+  width: 100%;
+  max-width: none;
+  margin: 10px 0;
   background: #fff;
   border: 1px solid #ddd;
   padding: 10px;
-  margin: 8px auto;
-  width: 90%;
-  max-width: 400px;
   border-radius: 10px;
   text-align: left;
+  box-sizing: border-box;
 }
 
 .taskTime {
@@ -128,88 +341,91 @@
   margin-top: 5px;
 }
 
-#badge {
-  background: red;
-  color: white;
-  display: inline-block;
-  padding: 5px 10px;
-  border-radius: 20px;
-  margin: 10px;
-  font-size: 14px;
+#taskList {
+  padding-bottom: 220px;
+}
+
+#pinnedTasks {
+  background: transparent;
+  margin-bottom: 6px;
+}
+
+#pinnedTasks {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+
+#pinnedTasks:empty {
+  display: none;
+}
+
+#taskList {
+  display: none;
+}
+
+/* =========================
+   選択肢
+========================= */
+#choices {
+  position: fixed;
+  left: 50%;
+  bottom: 260px;
+  transform: translateX(-50%);
+  width: min(500px, 100vw);
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0;
+  background: rgba(255,255,255,0.95);
+  pointer-events: auto;
+}
+
+#choices:empty {
+  display: none;
 }
 
 .choiceBtn {
   display: block;
-  width: 80%;
+  width: 90%;
   margin: 5px auto;
-  padding: 10px;
+  padding: 12px;
   border-radius: 20px;
   border: none;
   background: #eee;
   cursor: pointer;
+  position: relative;
+  z-index: 10001;
 }
 
-.readDone {
-  opacity: 0.6;
-}
-
-.crazy::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255,0,0,0.1);
-  pointer-events: none;
-  animation: flicker 0.2s infinite;
-}
-
-.noise {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  background-image: url("noise.png");
-  opacity: 0.1;
-  mix-blend-mode: overlay;
-  animation: noiseAnim 0.2s infinite;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  font-size: 16px;
-  font-family: -apple-system, sans-serif;
-}
-
-body {
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-#header {
-  flex-direction: row;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-#girl {
-  width: 90px;
-}
-
-#chat {
-  height: 55vh;
-  padding: 8px;
-}
-
+/* =========================
+   入力欄
+========================= */
 #inputArea {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 420px;
+  box-sizing: border-box;
+  background: #f7f7f7;
+  border-top: 1px solid #ccc;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  padding: 8px 10px;
   gap: 8px;
-  padding: 10px;
+  z-index: 1000;
+}
+
+#taskInput {
+  flex: 1;
+  min-width: 0;
+  border-radius: 20px;
+  border: none;
+  background: white;
+  padding: 10px 14px;
 }
 
 #inputArea input,
@@ -218,46 +434,68 @@ body {
   padding: 10px;
 }
 
-.task {
-  width: 95%;
-  max-width: none;
-  font-size: 15px;
+#inputArea button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #06c755;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-#badge {
-  font-size: 13px;
-  padding: 4px 8px;
+/* =========================
+   ステータス色
+========================= */
+.soft #girl { border-color: #00c853; }
+.middle #girl { border-color: #ffd600; }
+.hard #girl { border-color: #ff6d00; }
+.crazy #girl { border-color: #d50000; }
+
+#girl {
+  width: 50px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  box-sizing: border-box;
 }
 
 </style>
 </head>
 
 <body>
-
-<h2>彼女とのトーク</h2>
-
-<div id="badge">未読: 0</div>
-
 <div id="header">
+  <div style="font-size:20px;">←</div>
+
   <img id="girl" src="happy.png">
-  <div>
-    <div id="girlName">彼女</div>
-    <div id="status">soft</div>
-  </div>
+
+  <div style="flex:1; line-height:1.2;">
+  <div id="girlName">彼女</div>
+  <div id="status" style="font-size:12px; opacity:0.7;">安定</div>
 </div>
 
+  <div style="font-size:18px;">📞</div>
+  <div style="font-size:18px;">☰</div>
+
+  <div id="badge">未読: 0</div>
+</div>
+
+
+
 <div id="chat"></div>
+
+<div id="taskList"></div>
 
 <div id="choices"></div>
 
 <div id="inputArea">
   <input id="taskInput" placeholder="タスク">
   <input id="deadlineInput" type="datetime-local">
-  <button onclick="sendTaskFromInput()">➤</button>
+  <button type="button" onclick="sendTaskFromInput()">
+  <svg viewBox="0 0 24 24" width="20" height="20">
+    <path fill="white" d="M2 21l21-9L2 3v7l15 2-15 2z"/>
+  </svg>
+</button>
 </div>
-
-<h3>タスク一覧</h3>
-<div id="taskList"></div>
 
 <div class="noise"></div>
 
@@ -267,27 +505,23 @@ body {
 
 <script>
 
-let audioReady = false;
-
 function unlockAudio() {
   const bgm = document.getElementById("bgm");
   if (!bgm) return;
 
   bgm.volume = 0.5;
   bgm.loop = true;
-
   bgm.play().catch(() => {});
-  
   audioReady = true;
 }
 
 document.addEventListener("click", () => {
-  if (!audioReady) {
-    unlockAudio();
-  }
+  if (!audioUnlocked) unlockAudio();
 });
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+let showAllPinned = false;
 
 let lastState = "soft";
 let lastSendTime = 0;
@@ -298,6 +532,7 @@ let lastObsessedTask = null;
 let lastUserAction = Date.now();
 
 let audioUnlocked = false;
+let audioReady = false;
 let bgmTimeout = null;
 let notificationLock = false;
 
@@ -306,7 +541,9 @@ let justRead = false;
 let lastLine = "";
 let notificationAsked = false;
 
-const title = document.querySelector("h2");
+let isPageActive = !document.hidden;
+
+let lastDateLabel = "";
 
 const bgmList = {
   soft: "bgm_soft.mp3",
@@ -314,120 +551,6 @@ const bgmList = {
   hard: "bgm_hard.mp3",
   crazy: "bgm_crazy.mp3"
 };
-
-function getPhase() {
-  if (madnessLevel < 3) return "normal";
-  if (madnessLevel < 6) return "dependent";
-  if (madnessLevel < 10) return "unstable";
-  if (madnessLevel < 15) return "broken";
-  return "entity";
-}
-
-function updateBadge() {
-  const badge = document.getElementById("badge");
-  badge.textContent = "未読: " + unreadCount;
-
-  if (unreadCount === 0) {
-    badge.style.display = "none";
-  } else {
-    badge.style.display = "inline-block";
-  }
-}
-
-function showChoices(options) {
-  const box = document.getElementById("choices");
-  if (!box) return;
-
-  box.innerHTML = "";
-
-  options.forEach(opt => {
-  const btn = document.createElement("button");
-  btn.className = "choiceBtn";
-  btn.textContent = opt.text;
-
-  btn.onclick = () => {
-    sendMyMessage(opt.text); 
-
-    setTimeout(() => {
-      opt.action();
-    }, 300); 
-
-    box.innerHTML = "";
-  };
-
-  box.appendChild(btn);
- }); 
-} 
-
-
-
-function renderTasks() {
-  const list = document.getElementById("taskList");
-  if (!list) return;
-
-  list.innerHTML = "";
-
-  tasks.forEach((task, index) => {
-
-    const div = document.createElement("div");
-    div.className = "task";
-
-    const timeLeft = task.deadline - Date.now();
-
-let timeText = "";
-
-if (timeLeft < 0) {
-  timeText = "⚠ 期限切れ";
-} else {
-  const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-  timeText = `あと ${hours}時間${minutes}分`;
-}
-
-    div.innerHTML = `
-      <div><b>${task.text}</b></div>
-      <div class="taskTime">${timeText}</div>
-      <button onclick="completeTask(${index})">終わった</button>
-    `;
-
-    list.appendChild(div);
-  });
-}
-
-function completeTask(index) {
-
-  const task = tasks[index];
-
-  addChat("me", "おわった");
-
-  if (!window.clearCount) window.clearCount = 0;
-  window.clearCount++;
-
-  const praise = [
-    "えらすぎ",
-    "ちゃんとやるじゃん",
-    "余裕だよね"
-  ];
-
-  sendLine(random(praise));
-
-  if (window.clearCount % 3 === 0) {
-    setTimeout(() => {
-      sendLine("今日ちょっとすごいよ…");
-    }, 800);
-  }
-
-  tasks.splice(index, 1);
-
-  save();
-  renderTasks();
-
-  updateMadness("soft");
-}
-
-function save() {
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-}
 
 const states = {
   soft: { img: "happy.png", lines: ["まだ余裕だよね？"] },
@@ -459,11 +582,317 @@ function random(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+function makeTaskId() {
+  return Date.now() + "_" + Math.random().toString(16).slice(2);
+}
+
+function normalizeTasks() {
+  tasks = (tasks || []).map(task => ({
+    id: task.id || makeTaskId(),
+    text: task.text || "",
+    detail: task.detail || task.text || "",
+    deadline: Number(task.deadline) || Date.now() + 60 * 60 * 1000
+  }));
+  save();
+}
+
+function injectTaskStyles() {
+  if (document.getElementById("task-ui-style")) return;
+
+  const style = document.createElement("style");
+  style.id = "task-ui-style";
+  style.textContent = `
+    #pinnedTasks {
+  position: static;
+  top: 56px;
+  z-index: 30;
+  border-bottom: none;
+}
+    #taskList {
+  padding-bottom: 0;
+  display: none;
+}
+    .pinnedTask {
+      width: 100%;
+      display: block;
+      border: none;
+      background: #fff;
+      border-radius: 16px;
+      padding: 10px 12px;
+      margin: 4px 0;
+      text-align: left;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .taskActionRow {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .taskActionRow button {
+      flex: 1;
+      border: none;
+      border-radius: 18px;
+      padding: 10px 12px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .taskDetailsBtn {
+      background: #eee;
+      color: #333;
+    }
+
+    .taskDoneBtn {
+      background: #06c755;
+      color: #fff;
+    }
+
+    #taskModal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.35);
+      z-index: 3000;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    #taskModal.show {
+      display: flex;
+    }
+
+    #taskModalPanel {
+      width: min(420px, 100%);
+      background: #fff;
+      border-radius: 18px;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    #taskModalTitle {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    #taskModalDetail,
+    #taskModalDeadline {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    #taskModalComplete,
+    #taskModalClose {
+      width: 100%;
+      border: none;
+      border-radius: 20px;
+      padding: 12px;
+      font-size: 15px;
+      margin-top: 8px;
+      cursor: pointer;
+    }
+
+    #taskModalComplete {
+      background: #06c755;
+      color: #fff;
+    }
+
+    #taskModalClose {
+      background: #eee;
+      color: #333;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function ensureTaskUI() {
+  const chat = document.getElementById("chat");
+  if (!chat) return;
+
+  let pinned = document.getElementById("pinnedTasks");
+  if (!pinned) {
+    pinned = document.createElement("div");
+    pinned.id = "pinnedTasks";
+  }
+  if (pinned.parentElement !== chat) {
+    chat.insertBefore(pinned, chat.firstChild);
+  }
+
+  let list = document.getElementById("taskList");
+  if (!list) {
+    list = document.createElement("div");
+    list.id = "taskList";
+  }
+  if (list.parentElement !== chat) {
+    const afterPinned = pinned.nextSibling;
+    chat.insertBefore(list, afterPinned);
+  }
+
+  let modal = document.getElementById("taskModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "taskModal";
+    modal.innerHTML = `
+      <div id="taskModalPanel">
+        <div id="taskModalTitle"></div>
+        <div id="taskModalDetail"></div>
+        <div id="taskModalDeadline"></div>
+        <button id="taskModalComplete" type="button">タスクが終わった</button>
+        <button id="taskModalClose" type="button">閉じる</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  const closeBtn = document.getElementById("taskModalClose");
+  const completeBtn = document.getElementById("taskModalComplete");
+
+  if (closeBtn && !closeBtn.dataset.bound) {
+    closeBtn.dataset.bound = "1";
+    closeBtn.addEventListener("click", closeTaskModal);
+  }
+
+  if (completeBtn && !completeBtn.dataset.bound) {
+    completeBtn.dataset.bound = "1";
+    completeBtn.addEventListener("click", () => {
+      if (!currentTaskId) return;
+      completeTaskById(currentTaskId);
+    });
+  }
+
+  if (!modal.dataset.bound) {
+    modal.dataset.bound = "1";
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeTaskModal();
+    });
+  }
+}
+
+let currentTaskId = null;
+
+function openTaskModal(taskId) {
+  const task = tasks.find(t => t.id === taskId);
+  if (!task) return;
+
+  currentTaskId = taskId;
+
+  const modal = document.getElementById("taskModal");
+  const titleEl = document.getElementById("taskModalTitle");
+  const detailEl = document.getElementById("taskModalDetail");
+  const deadlineEl = document.getElementById("taskModalDeadline");
+
+  if (titleEl) titleEl.textContent = task.text || "タスク";
+  if (detailEl) detailEl.textContent = "詳細: " + (task.detail || task.text || "なし");
+
+  if (deadlineEl) {
+    const d = new Date(task.deadline);
+    deadlineEl.textContent =
+      "期限: " +
+      d.getFullYear() + "/" +
+      String(d.getMonth() + 1).padStart(2, "0") + "/" +
+      String(d.getDate()).padStart(2, "0") + " " +
+      String(d.getHours()).padStart(2, "0") + ":" +
+      String(d.getMinutes()).padStart(2, "0");
+  }
+
+  if (modal) modal.classList.add("show");
+}
+
+function closeTaskModal() {
+  const modal = document.getElementById("taskModal");
+  if (modal) modal.classList.remove("show");
+  currentTaskId = null;
+}
+
+function updateBadge() {
+  const badge = document.getElementById("badge");
+  if (!badge) return;
+
+  badge.textContent = "未読: " + unreadCount;
+
+  if (unreadCount === 0) {
+    badge.style.display = "none";
+  } else {
+    badge.style.display = "inline-block";
+  }
+}
+
+function getPhase() {
+  if (madnessLevel < 3) return "normal";
+  if (madnessLevel < 6) return "dependent";
+  if (madnessLevel < 10) return "unstable";
+  if (madnessLevel < 15) return "broken";
+  return "entity";
+}
+
+function showChoices(options) {
+  const box = document.getElementById("choices");
+  if (!box) return;
+
+  box.innerHTML = "";
+
+  options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.className = "choiceBtn";
+    btn.textContent = opt.text;
+
+    btn.onclick = () => {
+      sendMyMessage(opt.text);
+
+      setTimeout(() => {
+        opt.action();
+      }, 300);
+
+      box.innerHTML = "";
+    };
+
+    box.appendChild(btn);
+  });
+}
+
+function getDateLabel(date) {
+  const today = new Date();
+  const target = new Date(date);
+  const diff = Math.floor((today.getTime() - target.getTime()) / (1000 * 60 * 60 * 24));
+
+  if (diff === 0) return "今日";
+  if (diff === 1) return "昨日";
+
+  return target.getFullYear() + "/" + (target.getMonth() + 1) + "/" + target.getDate();
+}
+
+function insertDateLabelIfNeeded() {
+  const chat = document.getElementById("chat");
+  if (!chat) return;
+
+  const label = getDateLabel(new Date());
+
+  if (label !== lastDateLabel) {
+    const div = document.createElement("div");
+    div.textContent = label;
+    div.style.textAlign = "center";
+    div.style.fontSize = "12px";
+    div.style.color = "#666";
+    div.style.margin = "10px 0";
+    chat.appendChild(div);
+    lastDateLabel = label;
+  }
+}
+
 function addChat(type, text) {
   const chat = document.getElementById("chat");
+  if (!chat) return;
 
   const div = document.createElement("div");
-  div.className = "msg " + type;
+  div.className = "bubble " + type;
   div.textContent = text;
 
   chat.appendChild(div);
@@ -471,17 +900,43 @@ function addChat(type, text) {
 }
 
 function sendMyMessage(text) {
-  addChat("me", text);
+  insertDateLabelIfNeeded();
 
   const chat = document.getElementById("chat");
+  if (!chat) return;
+
+  const row = document.createElement("div");
+  row.className = "msgRow me";
+
+  const block = document.createElement("div");
+  block.className = "messageBlock me";
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble me";
+  bubble.textContent = text;
+
+  const meta = document.createElement("div");
+  meta.className = "messageMeta";
 
   const read = document.createElement("div");
+  read.className = "read";
   read.textContent = "送信中...";
-  read.style.fontSize = "10px";
-  read.style.color = "#888";
-  read.style.textAlign = "right";
 
-  chat.appendChild(read);
+  const time = document.createElement("div");
+  time.className = "time";
+
+  const timeNow = new Date();
+  time.textContent =
+    String(timeNow.getHours()).padStart(2, "0") + ":" +
+    String(timeNow.getMinutes()).padStart(2, "0");
+
+  meta.appendChild(read);
+  meta.appendChild(time);
+  block.appendChild(bubble);
+  block.appendChild(meta);
+  row.appendChild(block);
+
+  chat.appendChild(row);
   chat.scrollTop = chat.scrollHeight;
 
   setTimeout(() => {
@@ -497,8 +952,6 @@ function updateMadness(state) {
   }
 }
 
-
-
 function changeState(state) {
   document.body.className = state;
 
@@ -508,15 +961,14 @@ function changeState(state) {
   }
 
   const status = document.getElementById("status");
-  if (status) status.textContent = state;
+  const statusMap = {
+    soft: "オンライン",
+    middle: "ちょっと不安そう…",
+    hard: "機嫌が悪そうだ…",
+    crazy: "危ない…！"
+  };
 
-  const title = document.querySelector("h2");
-  if (title) {
-    if (state === "soft") title.textContent = "彼女（安定）";
-    if (state === "middle") title.textContent = "彼女（不安）";
-    if (state === "hard") title.textContent = "彼女（不安定）";
-    if (state === "crazy") title.textContent = "彼女（危険）";
-  }
+  if (status) status.textContent = statusMap[state] || state;
 
   const bgm = document.getElementById("bgm");
   const newSrc = bgmList[state];
@@ -534,10 +986,9 @@ function changeState(state) {
     localStorage.setItem("currentState", state);
   }
 }
-  
+
 function markAllAsRead() {
   const msgs = document.querySelectorAll(".bubble.girl");
-
   msgs.forEach(msg => {
     msg.classList.add("readDone");
   });
@@ -546,51 +997,17 @@ function markAllAsRead() {
   updateBadge();
 }
 
-function sendLine(msg) {
-  const delay = 500 + Math.random() * 1500;
-
-  setTimeout(() => {
-
-    const now = Date.now();
-    if (now - lastSendTime < 800) return;
-    if (msg === lastLine) return;
-
-    lastSendTime = now;
-    lastLine = msg;
-
-    showFakeNotification("彼女", msg);
-    playSE();
-
-    unreadCount++;
-    updateBadge();
-
-    const chat = document.getElementById("chat");
-    const wrapper = document.createElement("div");
-
-    const bubble = document.createElement("div");
-    bubble.className = "bubble girl";
-    bubble.textContent = msg;
-
-    wrapper.appendChild(bubble);
-    chat.appendChild(wrapper);
-    chat.scrollTop = chat.scrollHeight;
-
-  }, delay);
-}
-
-function playSE() {
-  const se = document.getElementById("se");
-  se.src = "se.mp3";
-  se.currentTime = 0;
-  se.play().catch(()=>{});
-}
-
 function showFakeNotification(title, msg) {
+  if ("Notification" in window && Notification.permission === "granted") {
+  try {
+    new Notification(title);
+  } catch (e) {}
+}
+
   if (notificationLock) return;
   notificationLock = true;
 
   const box = document.createElement("div");
-
   box.style.position = "fixed";
   box.style.top = "10px";
   box.style.left = "50%";
@@ -600,10 +1017,8 @@ function showFakeNotification(title, msg) {
   box.style.padding = "10px 15px";
   box.style.borderRadius = "20px";
   box.style.zIndex = "9999";
-
   box.style.opacity = "0";
   box.style.transition = "all 0.3s ease";
-
   box.textContent = `${title}：${msg}`;
   document.body.appendChild(box);
 
@@ -623,32 +1038,195 @@ function showFakeNotification(title, msg) {
   }, 2500);
 }
 
+function playSE() {
+  const se = document.getElementById("se");
+  if (!se) return;
+
+  se.src = "se.mp3";
+  se.currentTime = 0;
+  se.play().catch(() => {});
+}
+
+function sendLine(msg) {
+  const delay = 500 + Math.random() * 1500;
+
+  setTimeout(() => {
+    insertDateLabelIfNeeded();
+
+    const nowTs = Date.now();
+    if (nowTs - lastSendTime < 800) return;
+    if (msg === lastLine) return;
+
+    lastSendTime = nowTs;
+    lastLine = msg;
+
+    showFakeNotification("彼女", msg);
+    playSE();
+
+    const isUnread = document.hidden || !document.hasFocus();
+    if (isUnread) {
+      unreadCount++;
+    } else {
+      unreadCount = 0;
+    }
+    updateBadge();
+
+    const chat = document.getElementById("chat");
+    if (!chat) return;
+
+    const row = document.createElement("div");
+    row.className = "msgRow girl";
+
+    const block = document.createElement("div");
+    block.className = "messageBlock girl";
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble girl";
+    bubble.textContent = msg;
+
+    const meta = document.createElement("div");
+    meta.className = "messageMeta";
+
+    const time = document.createElement("div");
+    time.className = "time";
+
+    const timeNow = new Date();
+    time.textContent =
+      String(timeNow.getHours()).padStart(2, "0") + ":" +
+      String(timeNow.getMinutes()).padStart(2, "0");
+
+    meta.appendChild(time);
+    block.appendChild(bubble);
+    block.appendChild(meta);
+
+    row.appendChild(block);
+    chat.appendChild(row);
+    chat.scrollTop = chat.scrollHeight;
+  }, delay);
+}
+
+function renderTasks() {
+  ensureTaskUI();
+
+  const pinned = document.getElementById("pinnedTasks");
+  if (!pinned) return;
+
+  pinned.innerHTML = "";
+
+  const activeTasks = tasks.slice().sort((a, b) => a.deadline - b.deadline);
+
+  if (activeTasks.length > 0) {
+
+  if (showAllPinned) {
+    // 👇 全タスク表示
+    activeTasks.forEach(task => {
+      const pin = document.createElement("button");
+      pin.type = "button";
+      pin.className = "pinnedTask";
+      pin.textContent = "📌 " + task.text;
+      pin.onclick = () => openTaskModal(task.id);
+      pinned.appendChild(pin);
+    });
+
+  } else {
+    // 👇 1個だけ表示（今まで通り）
+    const mainTask = activeTasks[0];
+
+    const pin = document.createElement("button");
+    pin.type = "button";
+    pin.className = "pinnedTask";
+    pin.textContent = "📌 " + mainTask.text;
+
+    // タップ
+    pin.onclick = () => openTaskModal(mainTask.id);
+
+    // 長押し（PC + スマホ統一）
+    let pressTimer;
+
+    const startPress = () => {
+      pressTimer = setTimeout(() => {
+        showAllPinned = true;
+        renderTasks();
+      }, 600);
+    };
+
+    const cancelPress = () => clearTimeout(pressTimer);
+
+    pin.onmousedown = startPress;
+    pin.onmouseup = cancelPress;
+    pin.onmouseleave = cancelPress;
+
+    pin.ontouchstart = startPress;
+    pin.ontouchend = cancelPress;
+    pin.ontouchcancel = cancelPress;
+
+    pinned.appendChild(pin);
+  }
+
+  pinned.style.display = "block";
+
+} else {
+  pinned.style.display = "none";
+}
+}
+
+// 👇 ここは外に出す（これが超重要）
+function completeTaskById(taskId) {
+  const index = tasks.findIndex(t => t.id === taskId);
+  if (index === -1) return;
+
+  const task = tasks[index];
+  sendMyMessage("「" + (task.text || "タスク") + "」おわった");
+  sendLine("えらい、ちゃんと終わらせたね");
+
+  tasks.splice(index, 1);
+  save();
+  renderTasks();
+  updateMadness("soft");
+  closeTaskModal();
+
+  if (tasks.length === 0) {
+    lastState = "soft";
+    changeState("soft");
+  }
+}
+
+function completeTask(index) {
+  const task = tasks[index];
+  if (!task) return;
+  completeTaskById(task.id);
+}
+
+function save() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
 function sendTaskFromInput() {
   const input = document.getElementById("taskInput");
   const text = input.value.trim();
+  if (!text) return;
 
   const deadlineInput = document.getElementById("deadlineInput");
   const deadlineValue = deadlineInput.value;
 
   let deadline;
+  if (deadlineValue) {
+    deadline = new Date(deadlineValue).getTime();
+  } else {
+    deadline = Date.now() + 60 * 60 * 1000;
+  }
 
-if (deadlineValue) {
-  deadline = new Date(deadlineValue).getTime();
-} else {
-  
-  deadline = Date.now() + 60 * 60 * 1000;
-}
-
-  addChat("me", text);
+  sendMyMessage(text);
 
   tasks.push({
-  text: text,
-  deadline: deadline
-});
+    id: makeTaskId(),
+    text: text,
+    detail: text,
+    deadline: deadline
+  });
 
   save();
-
-renderTasks();
+  renderTasks();
 
   input.value = "";
   deadlineInput.value = "";
@@ -658,31 +1236,53 @@ renderTasks();
   }, 600);
 }
 
-document.addEventListener("click", () => {
+document.body.addEventListener("click", (e) => {
+  if (e.target.closest("#choices") || e.target.closest("#inputArea") || e.target.closest("#taskModal")) return;
 
-  if (!notificationAsked && Notification.permission === "default") {
+  if ("Notification" in window && !notificationAsked && Notification.permission === "default") {
     Notification.requestPermission();
     notificationAsked = true;
   }
 
-  if (!audioUnlocked) {
-    const bgm = document.getElementById("bgm");
-
-    const current = localStorage.getItem("currentState") || "soft";
-    bgm.src = bgmList[current];
-
-    bgm.volume = 0.5;
-    bgm.loop = true;
-
-    bgm.play().then(() => {
-      audioUnlocked = true;
-    }).catch(()=>{});
-  }
+  /* ⭐これだけ残す */
+  if (!audioUnlocked) unlockAudio();
 
   markAllAsRead();
 });
+document.addEventListener("click", (e) => {
+  if (
+    !e.target.closest("#pinnedTasks") &&
+    !e.target.closest("#taskModal")
+  ) {
+    showAllPinned = false;
+    renderTasks();
+  }
+});
+
+window.addEventListener("visibilitychange", () => {
+  isPageActive = !document.hidden;
+  if (isPageActive) {
+    unreadCount = 0;
+    updateBadge();
+    markAllAsRead();
+  }
+});
+
+window.addEventListener("focus", () => {
+  isPageActive = true;
+  unreadCount = 0;
+  updateBadge();
+  markAllAsRead();
+});
+
+window.addEventListener("blur", () => {
+  isPageActive = false;
+});
 
 window.addEventListener("load", () => {
+  injectTaskStyles();
+  ensureTaskUI();
+  normalizeTasks();
 
   const last = localStorage.getItem("lastVisit");
 
@@ -690,23 +1290,25 @@ window.addEventListener("load", () => {
     sendLine("…さっきまでいなかったよね？");
   }
 
-   const savedState = localStorage.getItem("currentState");
-if (savedState) {
-  changeState(savedState);
-  lastState = savedState;
-}
+  const savedState = localStorage.getItem("currentState");
+  if (savedState) {
+    changeState(savedState);
+    lastState = savedState;
+  }
 
   startGame();
+  updateBadge();
+  renderTasks();
+  localStorage.setItem("lastVisit", Date.now());
 });
 
 function startGame() {
-
   if (introDone) return;
   introDone = true;
 
   if (!localStorage.getItem("currentState")) {
-  changeState("soft");
-}
+    changeState("soft");
+  }
 
   setTimeout(() => {
     sendLine("おかえり。今日は何する？");
@@ -725,17 +1327,16 @@ function startGame() {
         }
       }
     ]);
-
   }, 500);
 }
 
 setInterval(() => {
-
   if (tasks.length === 0) {
     if (lastState !== "soft") {
       changeState("soft");
       lastState = "soft";
     }
+    renderTasks();
     return;
   }
 
@@ -755,9 +1356,9 @@ setInterval(() => {
   updateMadness(newState);
 
   if (newState !== lastState) {
-  lastState = newState;
-  changeState(newState);
-}
+    lastState = newState;
+    changeState(newState);
+  }
 
   if (newState === "soft" && Math.random() < 0.1) {
     sendLine("まだ余裕あるけど…ほんとに大丈夫？");
@@ -773,11 +1374,9 @@ setInterval(() => {
     sendLine("ずっと見てるよ？");
   }
 
+  renderTasks();
 }, 1000);
 
-setInterval(() => {
-  renderTasks();
-}, 3000);
 
 </script>
 </body>
