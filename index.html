@@ -1006,7 +1006,10 @@ function markAllAsRead() {
 function showFakeNotification(title, msg) {
   if ("Notification" in window && Notification.permission === "granted") {
   try {
-    new Notification(title);
+    new Notification("彼女", {
+      body: msg,
+      icon: "icon.png"
+    });
   } catch (e) {}
 }
 
